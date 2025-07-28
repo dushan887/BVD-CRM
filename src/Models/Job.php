@@ -8,6 +8,16 @@ final class Job extends AbstractModel
 {
     protected static string $orderBy = 'title';
 
+    public static function all(): array
+    {
+        return self::db()->get_results(
+            "SELECT j.* FROM " . self::$table . " j
+             WHERE EXISTS (SELECT 1 FROM " . str_replace('bvd_jobs', 'bvd_timesheets', self::$table) . " t WHERE t.job_id = j.id)
+             ORDER BY " . static::$orderBy,
+            ARRAY_A
+        );
+    }
+
     public static function boot(string $prefix): void
     {
         self::$table = "{$prefix}bvd_jobs";

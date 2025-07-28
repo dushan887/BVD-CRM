@@ -79,6 +79,29 @@ final class Importer
      */
     private function mapAndSave(array $row): void
     {
+        // always work with at least 21 cells so numeric indexes are safe
+        $row = array_pad($row, 21, '');
+
+        /* -----------------------------------------------------------------
+         * 1)  If description column (12) looks like a date (e.g. 6/Apr, 13/6)
+         *     we assume one hour‑cell was missing → re‑insert an empty cell
+         *     before column‑index 4 (the first employee).
+         * ----------------------------------------------------------------*/
+        $looksLikeDate = static function (string $v): bool {
+            return (bool) preg_match(
+            '/^\d{1,2}\s*[\/\-]\s*(\d{1,2}|[A-Za-z]{3})$/',
+            trim($v)
+            );
+        };
+
+        if ($looksLikeDate($row[12])) {
+            array_splice($row, 4, 0, ['']);   // insert a blank "hours" cell
+            $row = array_slice($row, 0, 21);  // keep array length constant
+        }
+
+        // ------------------------------------------------------------
+        // from here on the rest of the original method stays unchanged
+
         // Safe column accessor
         $col = static function (array $row, int $idx): string {
             return $row[$idx] ?? '';

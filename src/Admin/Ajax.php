@@ -18,6 +18,7 @@ final class Ajax
 
         add_action('wp_ajax_bvd_crm_export', [$this,'export']);
         add_action('wp_ajax_bvd_crm_nuke',   [$this,'nuke']);
+        add_action('wp_ajax_bvd_crm_refresh_nonce', [$this, 'refreshNonce']);
     }
 
     /* ------------------------------------------------------------------ */
@@ -148,5 +149,10 @@ final class Ajax
             $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}bvd_$t");
         }
         wp_send_json_success();
+    }
+
+    public function refreshNonce(): void
+    {
+        wp_send_json_success(['nonce' => wp_create_nonce('bvd_crm_admin')]);
     }
 }
