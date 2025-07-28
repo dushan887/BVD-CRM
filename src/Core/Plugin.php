@@ -50,11 +50,14 @@ final class Plugin
 
 
         // Admin, Front, AJAX, Shortcodes, etc.
+        // Front AJAX must be available for both logged‑in and logged‑out calls
+        (new \BVD\CRM\Front\Ajax())->register();
+
         if (is_admin()) {
             (new \BVD\CRM\Admin\Menu())->register();
             (new \BVD\CRM\Admin\Ajax())->register();
         } else {
-            (new \BVD\CRM\Front\Ajax())->register();
+            // Shortcodes render only on the public side
             (new \BVD\CRM\Front\Shortcodes\ClientSummary())->register();
         }
     }
