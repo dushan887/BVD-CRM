@@ -1,0 +1,39 @@
+# Ignore Composer dependencies
+/vendor/
+
+# Ignore node modules (if any)
+/node_modules/
+
+# Ignore OS and IDE files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Ignore build artifacts
+/dist/
+/build/
+
+# Ignore local environment/config files
+.env
+.env.*
+
+# Ignore PHPStorm and VSCode settings
+.idea/
+.vscode/
+
+# Ignore zip and archive files
+*.zip
+*.tar.gz
+*.tar
+*.rar
+
+# Ignore WordPress debug log
+wp-content/debug.log
+
+# Ignore other temp files
+*.swp
+*.swo
+
+# Ignore generated files
+/bvd-crm-tree-and-content.txt

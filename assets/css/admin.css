@@ -1,0 +1,4 @@
+#bvd-import-progress { font-weight: 600; }
+tr.shown + tr td { padding-top: 0 !important; }
+.bvd-editable { background:#fffdf5; cursor:text; }
+.bvd-editable:focus { outline:2px solid #2271b1; }
