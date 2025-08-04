@@ -6,6 +6,7 @@ namespace BVD\CRM\Models;
 
 final class Job extends AbstractModel
 {
+    protected static string $table;
     protected static string $orderBy = 'title';
 
     public static function all(): array

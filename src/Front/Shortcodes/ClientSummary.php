@@ -1,4 +1,9 @@
 <?php
+/**
+ * [bvd_client_summary] shortcode.
+ *
+ * @package BVD\CRM\Front\Shortcodes
+ */
 
 declare(strict_types=1);
 
@@ -15,15 +20,36 @@ final class ClientSummary
     {
         ob_start(); ?>
         <div class="bvd-crm-summary">
-            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading…</span></div>
-            <table id="bvd-crm-table" class="table table-striped table-bordered" style="display:none;width:100%">
+
+            <!-- toolbar (period picker) -->
+            <div id="bvd-toolbar" class="mb-3">
+                <div class="input-group input-group-sm" style="max-width:300px">
+                    <select id="bvd-period-type" class="form-select">
+                        <option value="month" selected>Month</option>
+                        <option value="quarter">Quarter</option>
+                    </select>
+                    <select id="bvd-period-val" class="form-select"></select>
+                </div>
+            </div>
+
+            <!-- spinner -->
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading…</span>
+            </div>
+
+            <!-- empty placeholder -->
+            <p id="bvd-empty" class="text-muted" style="display:none">No data.</p>
+
+            <!-- main DataTable -->
+            <table id="bvd-crm-table"
+                   class="table table-striped table-bordered"
+                   style="display:none;width:100%">
                 <thead>
                     <tr>
                         <th></th>
                         <th>Client</th>
-                        <th>Month/Quarter</th>
-                        <th>Hours&nbsp;(spent)</th>
-                        <th>Limit</th>
+                        <th>Period</th>
+                        <th>Hours&nbsp;(spent / limit)</th>
                         <th>Usage %</th>
                     </tr>
                 </thead>
@@ -34,8 +60,10 @@ final class ClientSummary
             <div class="modal fade" id="bvdTaskModal" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                  <div class="modal-header"><h5 class="modal-title">Task details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                  <div class="modal-header">
+                      <h5 class="modal-title">Task details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
                   <div class="modal-body"><div id="bvd-modal-body"></div></div>
                 </div>
               </div>

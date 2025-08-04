@@ -6,6 +6,7 @@ namespace BVD\CRM\Models;
 
 final class Timesheet extends AbstractModel
 {
+    protected static string $table;
     protected static string $orderBy = 'work_date';
 
     public static function boot(string $prefix): void

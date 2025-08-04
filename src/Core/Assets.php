@@ -57,6 +57,32 @@ final class Assets
                 'nonce' => wp_create_nonce('bvd_crm_admin'),
             ]);
         }
+        elseif (isset($_GET['page']) && $_GET['page'] === 'bvd-crm-employees') {
+            wp_enqueue_script(
+                'bvd-crm-employees',
+                BVD_CRM_URL . 'assets/js/admin-employees.js',
+                ['jquery'],
+                BVD_CRM_VERSION,
+                true
+            );
+            wp_localize_script('bvd-crm-employees', 'BVDCRMAdmin', [
+                'ajax'  => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('bvd_crm_admin'),
+            ]);
+        }
+        elseif (isset($_GET['page']) && $_GET['page'] === 'bvd-crm-jobs') {
+            wp_enqueue_script(
+                'bvd-crm-jobs',
+                BVD_CRM_URL . 'assets/js/admin-jobs.js',
+                ['jquery'],
+                BVD_CRM_VERSION,
+                true
+            );
+            wp_localize_script('bvd-crm-jobs', 'BVDCRMAdmin', [
+                'ajax'  => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('bvd_crm_admin'),
+            ]);
+        }
         elseif (isset($_GET['page']) && $_GET['page']==='bvd-crm-tools'){
             wp_enqueue_script('bvd-crm-tools',BVD_CRM_URL.'assets/js/admin-tools.js',['jquery'],BVD_CRM_VERSION,true);
             wp_localize_script('bvd-crm-tools','BVDCRMAdmin',['ajax'=>admin_url('admin-ajax.php'),'nonce'=>wp_create_nonce('bvd_crm_admin')]);

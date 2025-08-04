@@ -1,51 +1,67 @@
 <?php
-
 declare(strict_types=1);
 
 namespace BVD\CRM\Admin\Pages;
 
 use BVD\CRM\Models\Client;
 
-final class Clients
-{
-    public static function render(): void
-    {
-        global $wpdb;
-        Client::boot($wpdb->prefix);
-        $clients = Client::all();
-        ?>
-        <div class="wrap">
-            <h1>Clients</h1>
+final class Clients {
 
-            <form id="bvd-add-client" class="card card-body" style="max-width:720px;margin-bottom:1rem;">
-                <h2 style="margin:0 0 .5rem;">Add Client</h2>
-                <p>
-                    <input type="text" name="name" placeholder="Name" required class="regular-text">
-                    &nbsp; Monthly&nbsp;<input type="number" step="0.01" name="monthly_limit" value="1" style="width:90px;">
-                    &nbsp; Quarterly&nbsp;<input type="number" step="0.01" name="quarterly_limit" value="3" style="width:90px;">
-                </p>
-                <p><textarea name="notes" rows="2" placeholder="Notes" style="width:100%;"></textarea></p>
-                <p><button class="button button-primary">Add</button></p>
-            </form>
+	public static function render(): void {
 
-            <table class="widefat striped">
-                <thead><tr>
-                    <th>Name</th><th>Monthly limit</th><th>Quarterly limit</th><th>Notes</th>
-                </tr></thead>
-                <tbody id="bvd-clients-tbody">
-                <?php foreach ($clients as $c) : ?>
-                    <tr data-id="<?= esc_attr($c['id']) ?>">
-                        <td><?= esc_html($c['name']) ?></td>
-                        <td class="bvd-editable" data-field="monthly_limit" contenteditable><?= esc_html($c['monthly_limit']) ?></td>
-                        <td class="bvd-editable" data-field="quarterly_limit" contenteditable><?= esc_html($c['quarterly_limit']) ?></td>
-                        <td class="bvd-editable" data-field="notes" contenteditable><?= esc_html($c['notes'] ?? '') ?></td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+		global $wpdb;
+		Client::boot( $wpdb->prefix );
+		$clients = Client::all();
+		?>
+		<div class="wrap">
+			<h1>Clients</h1>
 
-            <p class="description">Click into a cell to edit &amp; simply tab/blur to save.</p>
-        </div>
-        <?php
-    }
+			<!-- merge toolbar -->
+			<div id="bvd-merge-box" class="notice notice-info"
+			     style="padding:10px 12px;display:none;margin-bottom:15px;">
+				<strong>Merge:</strong>
+				<select id="bvd-merge-target"></select>
+				<button id="bvd-merge-btn" class="button button-primary">Merge selected</button>
+			</div>
+
+			<!-- add‑new form (unchanged) -->
+			<form id="bvd-add-client" class="card card-body"
+			      style="max-width:720px;margin-bottom:1rem;">
+				<h2 style="margin:0 0 .5rem;">Add Client</h2>
+				<p>
+					<input type="text" name="name" placeholder="Name" required class="regular-text">
+					&nbsp; Monthly&nbsp;<input type="number" step="0.01" name="monthly_limit" value="1" style="width:90px;">
+					&nbsp; Quarterly&nbsp;<input type="number" step="0.01" name="quarterly_limit" value="3" style="width:90px;">
+				</p>
+				<p><textarea name="notes" rows="2" placeholder="Notes" style="width:100%;"></textarea></p>
+				<p><button class="button button-primary">Add</button></p>
+			</form>
+
+			<table class="widefat striped" id="bvd-clients-table">
+				<thead>
+					<tr>
+						<th style="width:26px"><input type="checkbox" id="bvd-check-all"></th>
+						<th>Name</th><th>Monthly limit</th><th>Quarterly limit</th><th>Notes</th>
+					</tr>
+				</thead>
+				<tbody id="bvd-clients-tbody">
+				<?php foreach ( $clients as $c ) : ?>
+					<tr data-id="<?= esc_attr( $c['id'] ); ?>">
+						<td><input type="checkbox" class="bvd-row-cb"></td>
+						<td><?= esc_html( $c['name'] ); ?></td>
+						<td class="bvd-editable" data-field="monthly_limit"
+						    contenteditable><?= esc_html( $c['monthly_limit'] ); ?></td>
+						<td class="bvd-editable" data-field="quarterly_limit"
+						    contenteditable><?= esc_html( $c['quarterly_limit'] ); ?></td>
+						<td class="bvd-editable" data-field="notes"
+						    contenteditable><?= esc_html( $c['notes'] ?? '' ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+
+			<p class="description">Tick + merge when duplicate spellings appear.</p>
+		</div>
+		<?php
+	}
 }

@@ -1,1 +1,7 @@
-.bvd-crm-summary .spinner-border { display:block; margin:2rem auto; }
+.bvd-crm-summary .spinner-border   { display:block; margin:2rem auto; }
+#bvd-toolbar                       { display:none; }
+#bvd-toolbar .form-select          { min-width:110px; }
+.bvd-task-row:hover                { cursor:pointer; background:#f8f9fa; }
+.bvd-job-link                      { font-weight:600; text-decoration:none; }
+.bvd-job-link:hover                { text-decoration:underline; }
+.modal {opacity: 1; visibility: visible;}
