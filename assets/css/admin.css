@@ -1,4 +1,66 @@
+/* Define CSS variables for BVD CRM colors and map to Bootstrap */
+:root {
+    --awb-color1: #2271b1; /* primary */
+    --awb-color2: #17a2b8; /* info */
+    --awb-color3: #28a745; /* success */
+    --awb-color4: #dc3545; /* danger */
+    --awb-color5: #c82333; /* danger dark */
+    --awb-color6: #bd2130; /* danger border */
+    --awb-color7: #343a40; /* dark */
+    --awb-color8: #f8f9fa; /* light */
+
+    /* Bootstrap variable overrides */
+    --bs-primary: var(--awb-color1);
+    --bs-info: var(--awb-color2);
+    --bs-success: var(--awb-color3);
+    --bs-danger: var(--awb-color4);
+    --bs-light: var(--awb-color8);
+    --bs-dark: var(--awb-color7);
+}
+
 #bvd-import-progress { font-weight: 600; }
 tr.shown + tr td { padding-top: 0 !important; }
 .bvd-editable { background:#fffdf5; cursor:text; }
 .bvd-editable:focus { outline:2px solid #2271b1; }
+.modal {opacity: 1 !important; visibility: visible !important;}
+tr.loading { pointer-events: none; opacity: 0.7; }
+/* Enhanced merge box styling */
+#bvd-merge-box {
+    border-left: 4px solid #2271b1;
+    background: #e9f5ff;
+    padding: 1rem;
+}
+/* Table styling */
+#bvd-clients-table {
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+#bvd-clients-table th {
+    background: var(--awb-color1);
+    color: #fff;
+    padding: 0.75rem;
+    text-align: left;
+}
+#bvd-clients-table td {
+    padding: 0.5rem;
+}
+/* Danger button */
+.button-danger {
+    background: var(--awb-color4);
+    border-color: var(--awb-color4);
+    color: #fff;
+}
+.button-danger:hover {
+    background: var(--awb-color5);
+    border-color: var(--awb-color6);
+}
+/* Link styling */
+.bvd-job-link {
+    color: var(--awb-color1);
+    font-weight: 600;
+}
+.bvd-job-link:hover {
+    color: darken(var(--awb-color1), 15%);
+    text-decoration: underline;
+}

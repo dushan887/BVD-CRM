@@ -41,6 +41,9 @@ final class Menu
 
                 add_submenu_page('bvd-crm', 'Tools',      'Tools',      $cap,
                     'bvd-crm-tools',   [Pages\Tools::class,   'render']);
+                // Dashboard overview
+                add_submenu_page('bvd-crm', 'Dashboard', 'Dashboard', $cap,
+                    'bvd-crm-dashboard', [Pages\Dashboard::class, 'render']);
             }
         );
     }

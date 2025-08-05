@@ -27,10 +27,11 @@ final class Ajax {
 		add_action( 'wp_ajax_bvd_crm_import_start',  [ $this, 'start' ] );
 		add_action( 'wp_ajax_bvd_crm_import_chunk',  [ $this, 'chunk' ] );
 
-		/* ---------- clients ---------- */
-		add_action( 'wp_ajax_bvd_crm_client_update', [ $this, 'clientUpdate' ] );
-		add_action( 'wp_ajax_bvd_crm_client_add',    [ $this, 'clientAdd' ] );
-		add_action( 'wp_ajax_bvd_crm_clients_merge', [ $this, 'clientsMerge' ] );
+	   /* ---------- clients ---------- */
+	   add_action( 'wp_ajax_bvd_crm_client_update', [ $this, 'clientUpdate' ] );
+	   add_action( 'wp_ajax_bvd_crm_client_add',    [ $this, 'clientAdd' ] );
+	   add_action( 'wp_ajax_bvd_crm_clients_merge', [ $this, 'clientsMerge' ] );
+	   add_action( 'wp_ajax_bvd_crm_clients_delete',[ $this, 'clientsDelete' ] );
 
 		/* ---------- employees -------- */
 		add_action( 'wp_ajax_bvd_crm_employee_update', [ $this, 'employeeUpdate' ] );
@@ -51,6 +52,7 @@ final class Ajax {
 	public function clientUpdate(): void {
 
 		$this->verifyNonce();
+		$this->verifyCap();
 
 		$id    = (int) ( $_POST['id'] ?? 0 );
 		$field = sanitize_key( $_POST['field'] ?? '' );
@@ -260,7 +262,7 @@ final class Ajax {
 		}
 		$upload = wp_upload_dir();
 		$dest   = trailingslashit( $upload['basedir'] ) .
-		          'bvd_tmp_' . time() . '.csv';
+				  'bvd_tmp_' . time() . '.csv';
 
 		if ( ! move_uploaded_file( $_FILES['file']['tmp_name'], $dest ) ) {
 			wp_send_json_error( 'Move failed', 500 );
@@ -379,6 +381,14 @@ final class Ajax {
 			check_admin_referer( 'bvd_crm_admin', 'nonce' );
 		} else {
 			check_admin_referer( 'bvd_crm_admin' ); // fallback
+		}
+	}
+	/**
+	 * Capability check helper.
+	 */
+	private function verifyCap( string $cap = 'manage_options' ): void {
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error( 'Forbidden', 403 );
 		}
 	}
 }

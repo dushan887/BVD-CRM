@@ -31,6 +31,9 @@ final class Ajax
         // nonce refresh
         add_action('wp_ajax_nopriv_bvd_crm_nonce', [$this,'nonce']);
         add_action('wp_ajax_bvd_crm_nonce',        [$this,'nonce']);
+        // available periods for toolbar (hide empty)
+        add_action('wp_ajax_nopriv_bvd_crm_available_periods', [$this, 'availablePeriods']);
+        add_action('wp_ajax_bvd_crm_available_periods',        [$this, 'availablePeriods']);
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -164,40 +167,30 @@ final class Ajax
     /* ─────────────────────────────────────────────────────────────
        3.  MODAL  (task details across clients)
        ──────────────────────────────────────────────────────────── */
-    public function taskDetails(): void
-    {
-        check_ajax_referer( 'bvd_crm_front', 'nonce' );
-
-        if ( ! current_user_can( 'administrator' ) ) {
-            wp_send_json_error( 'Forbidden', 403 );
+    public function taskDetails(): void {
+        check_ajax_referer('bvd_crm_front', 'nonce');
+        if (!current_user_can('administrator')) {
+            wp_send_json_error('Forbidden', 403);
         }
-
         global $wpdb;
-        Timesheet::boot( $wpdb->prefix );
-
-        $job = (int) ( $_GET['job'] ?? 0 );
-        if ( ! $job ) {
-            wp_send_json_error( 'Missing job', 400 );
+        Timesheet::boot($wpdb->prefix);
+        $job = (int) ($_GET['job'] ?? 0);
+        if (!$job) {
+            wp_send_json_error('Missing job', 400);
         }
-
-        /*  Admins get the *full lifetime* of the task – no period filter. */
-        $whereSql = '';
-        $params   = [];
-
         $sql = "
-            SELECT c.name   AS clinic,
-                   e.name   AS employee,
-                   DATE_FORMAT(t.work_date,'%Y-%m-%d') AS date,
-                   SUM(t.hours) AS hrs
-              FROM {$wpdb->prefix}bvd_timesheets t
-              JOIN {$wpdb->prefix}bvd_clients   c ON c.id = t.client_id
-              JOIN {$wpdb->prefix}bvd_employees e ON e.id = t.employee_id
-             WHERE t.job_id = %d
-             GROUP BY c.id, e.id, t.work_date
-             ORDER BY c.name, t.work_date";
-        $rows = $wpdb->get_results( $wpdb->prepare( $sql, $job, ...$params ) );
-
-        wp_send_json_success( $rows );
+            SELECT c.name AS clinic,
+                DATE_FORMAT(t.work_date, '%%Y-%%m-%%d') AS date,
+                e.name AS employee,
+                SUM(t.hours) AS hrs
+            FROM {$wpdb->prefix}bvd_timesheets t
+            JOIN {$wpdb->prefix}bvd_clients c ON c.id = t.client_id
+            JOIN {$wpdb->prefix}bvd_employees e ON e.id = t.employee_id
+            WHERE t.job_id = %d
+            GROUP BY c.id, t.work_date, e.id
+            ORDER BY c.name ASC, t.work_date DESC, e.name ASC";
+        $rows = $wpdb->get_results($wpdb->prepare($sql, $job));
+        wp_send_json_success($rows);
     }
 
 
@@ -205,6 +198,25 @@ final class Ajax
     public function nonce(): void
     {
         wp_send_json_success(wp_create_nonce('bvd_crm_front'));
+    }
+    /**
+     * Return periods (month or quarter) that have data, for toolbar filtering.
+     */
+    public function availablePeriods(): void {
+        check_ajax_referer('bvd_crm_front', 'nonce');
+        $type = sanitize_key($_GET['type'] ?? 'month');
+        global $wpdb;
+        if ('quarter' === $type) {
+            $sql = "SELECT DISTINCT CONCAT(YEAR(work_date), '-Q', CEIL(MONTH(work_date)/3)) AS period
+                    FROM {$wpdb->prefix}bvd_timesheets
+                    ORDER BY period DESC LIMIT 12";
+        } else {
+            $sql = "SELECT DISTINCT DATE_FORMAT(work_date, '%Y-%m') AS period
+                    FROM {$wpdb->prefix}bvd_timesheets
+                    ORDER BY period DESC LIMIT 15";
+        }
+        $periods = $wpdb->get_col($sql);
+        wp_send_json_success($periods);
     }
 
     /* ─────────────────────────────────────────────────────────────

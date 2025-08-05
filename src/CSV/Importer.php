@@ -24,23 +24,35 @@ final class Importer {
 	private const  CHUNK  = 1_000;
 
 	public function __construct( string $file, int $pointer = 0 ) {
+		$this->file    = $file;
+		$this->ptr     = $pointer;
 
-		$this->file = $file;
-		$this->ptr  = $pointer;
-
-		/* –– infer work‑year from file‑name (YYYY) ––––––––––– */
+		/* –– infer work-year from file-name (YYYY) –––––––––––––––––––––––––––––––– */
 		if ( preg_match( '/(20\d{2})/', basename( $file ), $m ) ) {
 			$this->year = (int) $m[1];
 		} else {
 			$this->year = (int) current_time( 'Y' );
 		}
 
-		/* –– boot models –––––––––––––––––––––––––––––––––––– */
+		/* –– boot models ––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
 		global $wpdb;
 		Client   ::boot( $wpdb->prefix );
 		Employee ::boot( $wpdb->prefix );
 		Job      ::boot( $wpdb->prefix );
 		Timesheet::boot( $wpdb->prefix );
+
+		/* –– always load header map –––––––––––––––––––––––––––––––––––––––––––––––– */
+		$this->loadHeader();
+	}
+
+	private function loadHeader(): void {
+		$fh = fopen( $this->file, 'r' );
+		if ( ! $fh ) {
+			throw new \RuntimeException( 'Open failed' );
+		}
+		$hdr = fgetcsv( $fh );
+		$this->captureHeader( $hdr ?: [] );
+		fclose( $fh );
 	}
 
 	/**
@@ -49,7 +61,6 @@ final class Importer {
 	 * @return array{next:int|null,rows:int,bytes:int}
 	 */
 	public function handle(): array {
-
 		if ( ! is_readable( $this->file ) ) {
 			throw new \RuntimeException( 'CSV not readable' );
 		}
@@ -57,29 +68,20 @@ final class Importer {
 		if ( ! $fh ) {
 			throw new \RuntimeException( 'Open failed' );
 		}
-		fseek( $fh, $this->ptr );
-
+		if ( $this->ptr === 0 ) {
+			fgetcsv( $fh ); // skip header
+		} else {
+			fseek( $fh, $this->ptr );
+		}
 		$rows  = 0;
 		$bytes = 0;
-		$hadHd = ( $this->ptr !== 0 );
-
 		while ( $rows < self::CHUNK && ( $row = fgetcsv( $fh, 0, ',' ) ) !== false ) {
-
 			$bytes += strlen( implode( ',', $row ) ) + 1; // crude but OK
-
-			if ( ! $hadHd ) {
-				$this->captureHeader( $row );
-				$hadHd = true;
-				continue;
-			}
-
 			$this->mapAndSave( $row );
 			$rows++;
 		}
-
 		$next = feof( $fh ) ? null : ftell( $fh );
 		fclose( $fh );
-
 		return [
 			'next'  => $next,
 			'rows'  => $rows,

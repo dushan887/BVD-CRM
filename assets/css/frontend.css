@@ -1,7 +1,85 @@
+/* Define CSS variables for BVD CRM colors and map to Bootstrap */
+:root {
+    /* Bootstrap variable overrides */
+    --bs-primary: var(--awb-color5);
+    --bs-info: var(--awb-color4);
+    --bs-light: var(--awb-color2);
+    --bs-dark: var(--awb-color7);
+}
+
 .bvd-crm-summary .spinner-border   { display:block; margin:2rem auto; }
 #bvd-toolbar                       { display:none; }
 #bvd-toolbar .form-select          { min-width:110px; }
-.bvd-task-row:hover                { cursor:pointer; background:#f8f9fa; }
-.bvd-job-link                      { font-weight:600; text-decoration:none; }
+.bvd-task-row:hover                { cursor:pointer; background: var(--awb-color8); }
+.bvd-job-link                      { font-weight:600; text-decoration:none; color: var(--awb-color5); }
 .bvd-job-link:hover                { text-decoration:underline; }
-.modal {opacity: 1; visibility: visible;}
+.modal {opacity: 1 !important; visibility: visible !important;}
+.modal.fade .modal-dialog {
+    transform: translate(0, 50px) !important;
+    transition: transform .3s ease-out;
+}
+tr.loading { pointer-events: none; opacity: 0.7; }
+/* Enhanced toolbar styling */
+#bvd-toolbar {
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    background: var(--awb-color4);
+    border:1px solid var(--awb-color5);
+    border-radius:0.25rem;
+    padding:0.75rem;
+    margin-bottom:1rem;
+}
+/* Styled buttons in toolbar */
+.btn-badge {
+    background: var(--awb-color5);
+    color:#fff;
+    border-radius:0.25rem;
+    padding:0.25rem 0.5rem;
+    text-transform:uppercase;
+    font-size:0.85rem;
+}
+/* Summary table styling */
+#bvd-crm-table {
+    border:1px solid #ddd;
+    border-radius:0.25rem;
+    overflow:hidden;
+}
+#bvd-crm-table th {
+    background: var(--awb-color5);
+    color:#fff;
+    padding:0.5rem;
+    text-align:left;
+}
+#bvd-crm-table td {
+    padding:0.5rem;
+}
+/* Badges for usage percentages and totals */
+.badge-usage {
+    background: var(--awb-color2);
+    color:#fff;
+}
+.badge-total {
+    background: var(--awb-color3);
+    color:#fff;
+}
+#bvd-crm-table h6,
+#bvd-modal-body h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--awb-color5);
+}
+#bvd-crm-table .badge ,
+#bvd-modal-body .badge  {
+    font-size: 18px;
+}
+#bvd-modal-body h6.ms-3 {
+    padding: 10px;
+    background: var(--awb-color3);
+}
+#bvd-crm-table table th:last-child {
+    width: 200px !important;
+}
